@@ -3,7 +3,7 @@ const BAD_REQUEST_CODE = 400;
 const NOT_FOUND_CODE = 404;
 const DEFAULT_ERROR_CODE = 500;
 const statusDefaultError = (err, res) => {
-  res.status(DEFAULT_ERROR_CODE).send({ message: "Произошла ошибка сервера!" });
+  res.status(DEFAULT_ERROR_CODE).send({ message: 'Произошла ошибка сервера!' });
 };
 
 module.exports = {
