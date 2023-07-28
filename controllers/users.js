@@ -58,7 +58,7 @@ const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .orFail(() => {
       throw new Error('NotFoundError');
@@ -115,7 +115,6 @@ const updateAvatar = (req, res) => {
           message: 'Переданы некорректные данные при обновлении аватара. ',
         });
       }
-      console.error(err);
       return res.status(DEFAULT_ERROR_CODE).send({ message: err.message });
     });
 };
