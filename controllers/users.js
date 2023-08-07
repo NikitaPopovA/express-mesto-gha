@@ -2,15 +2,15 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const NotFoundError = require('../utils/errors/error-notFound');
 
-module.exports.getCurrentUser = async (req, res, next) => {
-  try {
-    const user = await User.findOne(req.user).orFail(() => {
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findOne(req.user)
+    .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
-    });
-    res.send(user);
-  } catch (err) {
-    next(err);
-  }
+    })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => next(err));
 };
 
 module.exports.getUsers = async (req, res, next) => {
