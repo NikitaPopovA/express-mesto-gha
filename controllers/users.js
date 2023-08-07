@@ -13,78 +13,71 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.getUsers = async (req, res, next) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (err) {
-    next(err);
-  }
+module.exports.getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch((err) => next(err));
 };
 
-module.exports.createUser = async (req, res, next) => {
-  try {
-    const {
-      name, about, avatar, email, password,
-    } = req.body;
-    const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({
+module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10).then((hash) => {
+    User.create({
       name,
       about,
       avatar,
       email,
       password: hash,
-    });
-    res.status(201).send({
-      _id: user._id,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    });
-  } catch (err) {
-    next(err);
-  }
+    })
+      .then((user) => res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      }))
+      .catch((err) => next(err));
+  });
 };
 
-module.exports.getUser = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.userId).orFail(() => {
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.params.userId)
+    .orFail(() => {
       throw new NotFoundError('Пользователь с указанным _id не найден');
-    });
-    res.send(user);
-  } catch (err) {
-    next(err);
-  }
+    })
+    .then((user) => res.send(user))
+    .catch((err) => next(err));
 };
 
-module.exports.updateProfile = async (req, res, next) => {
-  try {
-    const { name, about, avatar } = req.body;
-    const updateData = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, about, avatar },
-      { new: true, runValidators: true },
-    ).orFail(() => {
+module.exports.updateProfile = (req, res, next) => {
+  const { name, about, avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about, avatar },
+    { new: true, runValidators: true },
+  )
+    .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
-    });
-    res.send(updateData);
-  } catch (err) {
-    next(err);
-  }
+    })
+    .then((updateData) => {
+      res.send(updateData);
+    })
+    .catch((err) => next(err));
 };
 
-module.exports.updateAvatar = async (req, res, next) => {
-  try {
-    const avatar = req.body;
-    const newData = await User.findByIdAndUpdate(req.user._id, avatar, {
-      new: true,
-      runValidators: true,
-    }).orFail(() => {
+module.exports.updateAvatar = (req, res, next) => {
+  const avatar = req.body;
+  User.findByIdAndUpdate(req.user._id, avatar, {
+    new: true,
+    runValidators: true,
+  })
+    .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
-    });
-    res.send(newData);
-  } catch (err) {
-    next(err);
-  }
+    })
+    .then((newData) => {
+      res.send(newData);
+    })
+    .catch((err) => next(err));
 };
