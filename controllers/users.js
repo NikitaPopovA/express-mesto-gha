@@ -3,7 +3,9 @@ const User = require('../models/user');
 const NotFoundError = require('../utils/errors/error-notFound');
 
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findOne(req.user)
+  const userId = req.user._id;
+
+  User.findById(userId)
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
