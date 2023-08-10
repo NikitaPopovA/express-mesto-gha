@@ -54,7 +54,7 @@ app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
 app.use((req, res, next) => {
-  next(new NotFoundError('Указан неправильный путь!'));
+  next(new NotFoundError('Указан неправильный путь'));
 });
 
 app.use(errors());
