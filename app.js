@@ -49,15 +49,14 @@ app.post(
   }),
   login,
 );
+app.use(auth);
 
-app.use('/users', auth, require('./routes/users'));
-app.use('/cards', auth, require('./routes/cards'));
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
-app.use((req, res, next) => {
-  next(new NotFoundError('Указан неправильный путь'));
-});
-
+app.use('/*', (req, res, next) => next(new NotFoundError('Страницы не существует')));
 app.use(errors());
+
 app.use(require('./middlewares/handle-errors'));
 
 app.listen(PORT, () => {
