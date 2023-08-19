@@ -1,10 +1,13 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { createUser } = require('./controllers/users');
 const { login } = require('./controllers/login');
 const { regExpUrl } = require('./utils/url/regExpUrl');
@@ -21,9 +24,18 @@ mongoose.connection.on('open', () => {
 });
 
 const app = express();
+app.use(cors());
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(errorLogger);
+
+app.use(requestLogger);
+app.use('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post(
   '/signup',
